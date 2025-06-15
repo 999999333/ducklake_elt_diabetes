@@ -59,7 +59,7 @@ function Run-PS {
 # -------- hints --------------------------------------------------------------
 $H = @{
     install_uv     = "Install/upgrade pip first:  py -m pip install -U pip"
-    uv_sync        = "Check pyproject.toml / requirements.* and required Python version."
+    uv_sync        = "Check pyproject.toml / requirements.* and required Python version. Make sure that uv is installed."
     duckdb_setup   = "Try rerunning. Check if python script can correctly reference .duckdb/*.json file"
     duckdb_ui      = "Try manually running 'duckdb -ui' in terminal and then killing it. There is big chance that your last session doesn't properly closed connection to db."
     py_raw         = "Add missing libs to pyproject & rerun 'uv sync'."
@@ -69,6 +69,25 @@ $H = @{
     dbt_docs       = "Did 'dbt run' succeed?  Inspect logs in transformation\\target\\."
     dbt_build      = "You can see that 'dbt build' failed. A few lines above you can see why → because data quality check wasn't succesfull and that is right (induced mistake to show capabilities of dbt's data testing :).Failing test (relationships_bridge_patient_visits_diagnosis__diagnosis_id___diagnosis_id__ref_dim_diagnosis) pinpoints what is failing, so we know that in this case we have to investigate referential integrity, between those 2 tables, because 12 rows breaks integrity expectation. "
 }
+
+function Get-UVCommand {
+    # 1) Does uv.exe exist anywhere on PATH?
+    if (Get-Command uv.exe -ErrorAction SilentlyContinue) {
+        return "uv"
+    }
+
+    # 2) Is the uv module importable?  (Means pip installed it even if PATH
+    #    isn’t refreshed yet.)  We test by asking Python to print its version.
+    try {
+        python -m uv --version > $null 2>&1
+        if ($LASTEXITCODE -eq 0) { return "python -m uv" }
+    } catch { }
+
+    return $null            # not installed
+}
+
+$UvCmd = Get-UVCommand
+
 
 function Should-Continue {
     param(
@@ -80,31 +99,37 @@ function Should-Continue {
 
 # ========== MAIN =============================================================
 try {
-    # 1) uv bootstrap ---------------------------------------------------------
-    if (-not (Get-Command uv.exe -ErrorAction SilentlyContinue)) {
-        Run-Step "Installing uv (user-level)" `
-                 "python -m pip install --upgrade --user uv" `
-                 $H.install_uv
+    # ---------- 1) ensure uv is available ---------------------------------------
+    if (-not $UvCmd) {
+        Run-Step "Installing uv"`
+                'powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"' `
+                $H.install_uv
+
+        # refresh variable after install
+        $UvCmd = Get-UVCommand
+        if (-not $UvCmd) {
+            throw "uv installed but still not discoverable. REBOOT YOUR PC! If it doesn't help, add the Scripts folder to PATH or reinstall with 'pipx install uv'."
+        }
     }
+
 
     # 2) sync dependencies ----------------------------------------------------
     Run-Step "uv sync" "uv sync" $H.uv_sync
 
     # 3) project’s Python scripts via uv run ----------------------------------
-    Run-Step "setup_duckdb_ui.py"  "uv run ingestion/setup_duckdb_ui.py"  $H.duckdb_ui
     Run-Step "raw_download.py" "uv run ingestion/raw_download.py" $H.py_raw
     Run-Step "ingest_dwh.py"  "uv run ingestion/ingest_dwh.py"  $H.py_ingest
 
     # 4) Activate .venv for dbt ----------------------------------------------
     $Act = ".\.venv\Scripts\Activate.ps1"
-    if (!(Test-Path $Act)) { throw ".venv not found – did 'uv sync' succeed?" }
+    if (!(Test-Path $Act)) { throw ".venv not found - did 'uv sync' succeed?" }
 
     Run-PS "Activating .venv" { . $Act; $global:VenvActivated = $true } $H.venv_activate
 
     # 5) dbt block inside transformation/ -------------------------------------
     $Transform = "transformation"
     if (-not (Test-Path $Transform)) {
-        throw "'$Transform' directory does not exist – adjust path in run_pipeline.ps1."
+        throw "'$Transform' directory does not exist - adjust path in run_pipeline.ps1."
     }
 
     Set-Location $Transform          # (we'll jump back in the FINALLY block)
@@ -114,6 +139,7 @@ try {
     Run-Step "Open docs"             "start .\target\static_index.html"
     Run-Step "dbt build"             "dbt build"                     $H.dbt_build
     Set-Location $StartPath
+    Run-Step "setup_duckdb_ui.py"    "uv run ingestion/setup_duckdb_ui.py"  $H.duckdb_ui
     Run-Step "duckdb -ui"            "duckdb -ui"                    $H.duckdb_ui
 
 
