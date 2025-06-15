@@ -1,6 +1,6 @@
-Welcome to your new dbt project!
+Welcome to ducklake transformation project!
 
-### Using the starter project
+### Using this and any other dbt project
 
 Try running the following commands:
 - dbt run
