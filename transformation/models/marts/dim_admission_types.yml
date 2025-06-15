@@ -1,0 +1,14 @@
+models:
+  - name: dim_admission_types
+    description: How was patient admitted into medical care
+    columns:
+      - name: admission_type_id
+        description: PK
+        data_type: integer
+        data_tests:
+          - not_null
+          - unique
+      - name: description
+        description: Description of admission type
+        data_type: varchar
+        quote: true

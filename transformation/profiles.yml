@@ -1,0 +1,16 @@
+test-ducklake:
+  target: default
+  outputs:
+    default:
+      type: duckdb
+      extensions:
+        - ducklake
+        - sqlite
+      attach:
+        - path: ducklake:sqlite:../lakehouse/metadata.sqlite
+          alias: ducklake
+          options:
+            data_path: "'../lakehouse/ducklake/'"
+      database: ducklake
+
+            

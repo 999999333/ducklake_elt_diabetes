@@ -1,0 +1,177 @@
+version: 2
+
+models:
+  - name: fact_patient_visits # ⬅ adjust to match your file name
+    description: >-
+      Clean, lightly-transformed fact for the diabetes hospital-encounter data set.  Column names are standardized to `snake_case`; no business logic is applied here beyond safe renames, so you can rely on a consistent, well-documented contract.
+    columns:
+
+      # ────────────────────────────────
+      # identifiers
+      # ────────────────────────────────
+      - name: encounter_id
+        description: Unique identifier of an encounter.
+        tests:
+          - not_null
+          - unique
+
+      - name: patient_id
+        description: Unique identifier of a patient.
+        tests:
+          - not_null
+
+      # ────────────────────────────────
+      # patient demographics
+      # ────────────────────────────────
+      - name: race
+        description: >-
+          Race of the patient. Possible values: Caucasian, Asian, African American, Hispanic, Other.
+      - name: gender
+        description: >-
+          Gender of the patient. Possible values: male, female, unknown/invalid.
+      - name: age
+        description: >-
+          Age bucketed into 10-year intervals: \[0–10), \[10–20), …, \[90–100).
+      - name: weight
+        description: Weight in pounds (stringified in the raw source).
+
+      # ────────────────────────────────
+      # admission & stay information
+      # ────────────────────────────────
+      - name: admission_type_id
+        description: >-
+          FK to admission types (e.g., emergency, urgent, elective, newborn, not available).
+        data_tests:
+          - relationships:
+              field: admission_type_id
+              to: ref('dim_admission_types')
+          - not_null
+      - name: discharge_disposition_id
+        description: >-
+          FK to discharge dispositions (e.g., discharged to home, expired, not available).
+        data_tests:
+          - relationships:
+              field: discharge_disposition_id
+              to: ref('dim_discharge_dispositions')
+          - not_null
+      - name: admission_source_id
+        description: >-
+          IFK to admission sources (e.g., physician referral, emergency room, transfer from hospital).
+        data_tests:
+          - relationships:
+              field: admission_source_id
+              to: ref('dim_admission_sources')
+          - not_null
+      - name: time_in_hospital
+        description: Integer number of days between admission and discharge.
+
+      # ────────────────────────────────
+      # payer & provider
+      # ────────────────────────────────
+      - name: payer_code
+        description: >-
+          Code for primary payer (e.g., Blue Cross/Blue Shield, Medicare, self-pay).
+      - name: medical_specialty
+        description: >-
+          Admitting physician specialty (e.g., cardiology, internal medicine, general practice, surgeon).
+
+      # ────────────────────────────────
+      # encounter-level counts
+      # ────────────────────────────────
+      - name: num_lab_procedures
+        description: Number of lab tests performed during the encounter.
+      - name: num_procedures
+        description: Number of non-lab procedures performed during the encounter.
+      - name: num_medications
+        description: Number of distinct generic medications administered.
+      - name: number_outpatient
+        description: Outpatient visits in the year preceding the encounter.
+      - name: number_emergency
+        description: Emergency visits in the year preceding the encounter.
+      - name: number_inpatient
+        description: Inpatient visits in the year preceding the encounter.
+
+      # ────────────────────────────────
+      # diagnoses
+      # ────────────────────────────────
+      - name: diag_1
+        description: Primary diagnosis (first 3 digits of ICD-9; more details for diabetes (250.xx)).
+      - name: diag_2
+        description: Secondary diagnosis (first 3 digits of ICD-9; more details for diabetes (250.xx)).
+      - name: diag_3
+        description: Additional secondary diagnosis (first 3 digits of ICD-9; more details for diabetes (250.xx)).
+      - name: number_diagnoses
+        description: Number of diagnoses recorded for the encounter.
+
+      # ────────────────────────────────
+      # lab results
+      # ────────────────────────────────
+      - name: max_glu_serum
+        description: >-
+          Glucose serum result category: >200, >300, normal, or none (not measured).
+      - name: a1c_result
+        description: >-
+          A1C result category: >8 (%), >7 (%), normal (<7 %), or none (not measured).
+
+      # ────────────────────────────────
+      # medication indicators  (up / down / steady / no)
+      # ────────────────────────────────
+      - name: metformin
+        description: Metformin prescription or dosage-change status.
+      - name: repaglinide
+        description: Repaglinide prescription or dosage-change status.
+      - name: nateglinide
+        description: Nateglinide prescription or dosage-change status.
+      - name: chlorpropamide
+        description: Chlorpropamide prescription or dosage-change status.
+      - name: glimepiride
+        description: Glimepiride prescription or dosage-change status.
+      - name: acetohexamide
+        description: Acetohexamide prescription or dosage-change status.
+      - name: glipizide
+        description: Glipizide prescription or dosage-change status.
+      - name: glyburide
+        description: Glyburide prescription or dosage-change status.
+      - name: tolbutamide
+        description: Tolbutamide prescription or dosage-change status.
+      - name: pioglitazone
+        description: Pioglitazone prescription or dosage-change status.
+      - name: rosiglitazone
+        description: Rosiglitazone prescription or dosage-change status.
+      - name: acarbose
+        description: Acarbose prescription or dosage-change status.
+      - name: miglitol
+        description: Miglitol prescription or dosage-change status.
+      - name: troglitazone
+        description: Troglitazone prescription or dosage-change status.
+      - name: tolazamide
+        description: Tolazamide prescription or dosage-change status.
+      - name: examide
+        description: Examide prescription or dosage-change status.
+      - name: citoglipton
+        description: Citoglipton prescription or dosage-change status.
+      - name: insulin
+        description: Insulin prescription or dosage-change status.
+      - name: glyburide_metformin
+        description: Glyburide-metformin combination prescription or dosage-change status.
+      - name: glipizide_metformin
+        description: Glipizide-metformin combination prescription or dosage-change status.
+      - name: glimepiride_pioglitazone
+        description: Glimepiride-pioglitazone combination prescription or dosage-change status.
+      - name: metformin_rosiglitazone
+        description: Metformin-rosiglitazone combination prescription or dosage-change status.
+      - name: metformin_pioglitazone
+        description: Metformin-pioglitazone combination prescription or dosage-change status.
+
+      # ────────────────────────────────
+      # encounter-level flags & target
+      # ────────────────────────────────
+      - name: change_flag
+        description: >-
+          Indicates if there was any change in diabetic medications (dosage or generic name). Values: change, no change.
+      - name: diabetes_medication
+        description: >-
+          Indicates if any diabetic medication was prescribed during the encounter. Values: yes, no.
+      - name: readmitted_flag
+        description: >-
+          Readmission status: <30 (readmitted within 30 days), >30 (after 30 days), No (no readmission record).

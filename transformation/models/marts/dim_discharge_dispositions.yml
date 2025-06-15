@@ -1,0 +1,14 @@
+models:
+  - name: dim_discharge_dispositions
+    description: State of patient during discharge from medical care.
+    columns:
+      - name: discharge_disposition_id
+        description: PK
+        data_type: integer
+        data_tests:
+          - not_null
+          - unique
+      - name: description
+        description: Description of state as logged by hospital staff
+        data_type: varchar
+        quote: true

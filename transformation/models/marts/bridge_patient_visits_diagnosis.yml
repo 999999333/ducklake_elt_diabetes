@@ -1,0 +1,20 @@
+models:
+  - name: bridge_patient_visits_diagnosis
+    description: Bridges patient visits and diagnoses.
+    columns:
+      - name: encounter_id
+        description: FK to patient visit table
+        data_tests:
+          - not_null
+          - relationships:
+              field: encounter_id
+              to: ref('fact_patient_visits')
+      - name: diagnosis_id
+        description: FK to diagnosis table
+        quote: true
+        data_tests:
+          - not_null
+          - relationships:
+              field: diagnosis_id
+              to: ref('dim_diagnosis')
+        

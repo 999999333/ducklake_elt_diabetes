@@ -1,0 +1,14 @@
+models:
+  - name: dim_admission_sources
+    description: From where patient was acquired to enter into hospital
+    columns:
+      - name: admission_source_id
+        description: PK
+        data_type: integer
+        data_tests:
+          - not_null
+          - unique
+      - name: description
+        description: Description of admission source
+        data_type: varchar
+        quote: true

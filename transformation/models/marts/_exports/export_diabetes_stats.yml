@@ -1,0 +1,32 @@
+models:
+  - name: export_diabetes_stats
+    description: Data export of diabetes statistics to send to external partners.
+    columns:
+      - name: encounter_id
+        description: Unique identifier for the patient encounter (visit)
+        data_tests:
+          - not_null
+
+      - name: patient_id
+        description:  Unique identifier for the patient
+        quote: true
+
+      - name: age
+        description: Age group (10-year range) of the patient at the time of encounter
+        quote: true
+
+      - name: diagnosis_name
+        description: Name of Diabetes diagnosis, as defined in the ICD-9-DX coding system
+        quote: true
+
+      - name: diagnosis_key
+        description: ICD-9-DX code of Diabetes diagnosis
+        quote: true
+
+      - name: time_in_hospital
+        description: Time in hospital in days
+        quote: true
+
+      - name: discharge_disposition
+        description:  Description of admission source
+        quote: true

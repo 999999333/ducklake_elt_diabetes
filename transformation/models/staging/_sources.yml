@@ -1,0 +1,17 @@
+version: 2
+
+sources:
+  - name: diabetes
+    description: Source data for diabetes patient records
+    database: ducklake
+    schema: diabetes
+    tables:
+      - name: mappings
+      - name: patient_records
+
+  - name: idc_9
+    description: Source data for diabetes patient records
+    database: ducklake
+    schema: idc_9
+    tables:
+      - name: diagnosis

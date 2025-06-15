@@ -1,0 +1,24 @@
+version: 2
+
+exposures:
+
+  - name: pbi_patient_dashboard
+    label: Power BI Patient Dashboard
+    type: dashboard
+    maturity: high
+    url: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=18s
+    description: >
+        This dashboard provides insights into patient data, including demographics,
+        treatment plans, and outcomes. It is used by healthcare professionals to
+        monitor patient health and improve care quality.
+    depends_on:
+      - ref('fact_patient_visits')
+      - ref('dim_discharge_dispositions')
+      - ref('dim_admission_sources')
+      - ref('dim_admission_types')
+      - ref('bridge_patient_visits_diagnosis')
+      - ref('dim_diagnosis')
+
+    owner:
+      name: John Doe
+      email: email@email.com

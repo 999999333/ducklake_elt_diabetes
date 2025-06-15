@@ -1,0 +1,17 @@
+models:
+  - name: dim_diagnosis
+    description: IDC 9 classified diagnosis excerpt. It contains only shorthand of possible diagnosises, first member of each 3 letter group (eg. 123.., 701.. ) with exception of diabetes (250%), where all 5 chars are used
+    columns:
+      - name: diagnosis_id
+        description: PK, it is divised from diagnosis_key
+        data_tests:
+          - not_null
+          - unique
+
+      - name: diagnosis_key
+        description: Original full length IDC 9 code as specified in the source data
+        quote: true
+
+      - name: diagnosis_name
+        description: Name of diagnosis
+        quote: true
