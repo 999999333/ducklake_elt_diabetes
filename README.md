@@ -2,8 +2,8 @@
 
 ![DuckLake architecture diagram](docs/imgs/ducklake_architexture.excalidraw.png)
 
-**DuckLake** is an opinionated, end‑to‑end example that shows how you can combine  
-**DuckDB + DuckLake + dbt + Python + Power BI** to build a production‑ready analytics stack on a single developer workstation.
+This repo contains end‑to‑end example implementation of [**DuckLake**](https://ducklake.select/) (using DuckDB [extension](https://duckdb.org/docs/stable/core_extensions/ducklake.html)) that shows how you can combine  
+**DuckDB + DuckLake + dbt + Python + Power BI** to build a production‑ready analytics stack for small/middle size organizations. It is possible to run it on single developer machine or scale up..
 
 The repository demonstrates:
 
@@ -13,8 +13,12 @@ The repository demonstrates:
 | **Bronze / Silver / Gold tables** & automatic cataloging | DuckDB + DuckLake | `lakehouse/` |
 | **SQL transformations, testing, docs** | dbt | `transformation/` |
 | **Interactive exploration & serving** | DuckDB CLI / DuckDB UI | everywhere |
-| **Self‑service BI** | Power BI (DuckDB connector) | outside repo |
-| **One‑click pipeline run** | PowerShell (`run_pipeline.ps1`) | repo root |
+| **Self‑service BI** | Power BI (DuckDB connector) | **TODO**, not implemented |
+| **One‑click pipeline run** | PowerShell  | repo root (`./run_pipeline.ps1`) |
+
+This is resulting data transformation lineage of data inside of DuckLake using dbt:
+
+![dbt lineage](docs/imgs/dbt_lineage.png)
 
 ---
 
