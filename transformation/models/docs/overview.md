@@ -1,14 +1,14 @@
 {% docs __overview__ %}
-# 🩺 Power BI Patient Dashboard: Diabetes Monitoring & Insights
+# 🩺 Diabetes Monitoring & Insights - DuckLake + dbt demo project
 
-Welcome to the **Power BI Patient Dashboard** project powered by `DuckLake`, `dbt`, `DuckDB`, `Python` and `Power BI`!  
+Welcome to the **Diabetes DuckLake insights** project powered by `DuckLake`, `dbt`, `DuckDB`, `Python` and `Power BI`!  
 This project is designed to process, transform, and surface valuable insights into diabetes patient care using modern data practices.
 
 ---
 
 ## 🚀 Project Overview
 
-This dbt project transforms raw healthcare data into curated, analysis-ready datasets that power a comprehensive **Power BI dashboard** for monitoring patient admissions, diagnoses, and discharge patterns with a focus on **diabetes**.
+This dbt project transforms raw healthcare data into curated, analysis-ready datasets that power a comprehensive **external data export, DataLake datawarehouse and Power BI dashboard** for monitoring patient admissions, diagnoses, and discharge patterns with a focus on **diabetes**.
 
 Using dbt's modular and testable approach, the project spans from raw ingestion to analytical marts, enabling reliable data exports and automated reporting.
 
